@@ -110,6 +110,45 @@ export const getAllScannedData = async (req: Request, res: Response, next: NextF
 
 export const deleteScannedDataById = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
+
+        const user = await User.findById({ _id: userId });
+
+        if (!user) {
+            res.status(401).json({
+                status: 'error',
+                message: 'You are not allow to access this endpoint',
+            });
+        }
+        
+        const {scannedId} = req?.params;
+
+        try {
+            const res = await Scanned.findByIdAndDelete(scannedId);
+            console.log(res);
+        } catch (error) {
+            return res.status(400).json({
+                status: "Error",
+                message: "Something went wrong when try to delete scanned"
+            })
+        }
+
+        res.status(200).json({
+            status: "Success",
+            message: "Delete scanned successfully"
+        })
         
     } catch (error) {
         const err: ErrorType = new Error('Something went wrong');

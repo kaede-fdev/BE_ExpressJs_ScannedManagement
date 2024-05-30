@@ -1,9 +1,7 @@
 import { NextFunction } from 'express';
 import { Schema } from 'mongoose';
 
-const slugify = require('slugify');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const scannedSchema = mongoose.Schema(
     {

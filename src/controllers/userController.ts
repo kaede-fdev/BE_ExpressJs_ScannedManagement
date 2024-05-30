@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import _, { forEach } from 'lodash';
 import { User } from '../models/UserModel';
-import mongoose from 'mongoose';
 import { ErrorType } from '../middlewares/errorHandler';
 
 const jwt = require('jsonwebtoken');
@@ -52,6 +51,7 @@ export const getAllUsers = async (req: any, res: Response, next: NextFunction) =
         }
         
         // Fetch users with pagination and filtering
+        console.log(filter)
         const users = await User.find(filter).sort({ isAdmin: -1 }).skip(skip).limit(limit);
 
         const totalUsers = await User.countDocuments(filter);
