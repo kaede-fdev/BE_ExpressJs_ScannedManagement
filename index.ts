@@ -12,6 +12,7 @@ connectDB();
 const authRoute = require('./src/routes/authRoute');
 const userRoute = require('./src/routes/userRoute');
 const settingsRoute = require('./src/routes/settingsRoute');
+const scannedRoute = require('./src/routes/scannedRoute');
 
 const app = express();
 const server = require("http").Server(app);
@@ -26,6 +27,7 @@ app.use('/', authRoute);
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/settings', settingsRoute);
+app.use('/api/v1/scan', scannedRoute);
 
 app.all('*', (req, res, next) => {
     const err: ErrorType = new Error('Unhandled Route');

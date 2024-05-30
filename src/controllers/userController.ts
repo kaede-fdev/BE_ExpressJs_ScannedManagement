@@ -50,6 +50,7 @@ export const getAllUsers = async (req: any, res: Response, next: NextFunction) =
                 { nickname: searchRegex },
             ];
         }
+        
         // Fetch users with pagination and filtering
         const users = await User.find(filter).sort({ isAdmin: -1 }).skip(skip).limit(limit);
 

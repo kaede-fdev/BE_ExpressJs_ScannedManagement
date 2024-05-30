@@ -23,6 +23,14 @@ const scannedSchema = mongoose.Schema(
             type: String,
             default: null,
         }, 
+        gender: {
+            type: String,
+            default: null,
+        }, 
+        dob: {
+            type: Date,
+            default: null,
+        }, 
         fullAddress: {
             type: String,
             default: null
@@ -40,4 +48,4 @@ const scannedSchema = mongoose.Schema(
 );
 
 
-export const User = mongoose.model('Scanned', scannedSchema);
+export const Scanned = mongoose.model('Scanned', scannedSchema);
