@@ -50,7 +50,6 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        console.log(user);
         if (!user) {
             const err: ErrorType = new Error('Email or Password is not correct');
             err.status = 400;

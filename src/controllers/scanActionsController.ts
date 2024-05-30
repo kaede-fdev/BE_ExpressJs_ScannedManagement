@@ -21,7 +21,6 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
             });
         }
         const token = authorization.replace('Bearer ', '');
-        console.log(token);
 
         const { userId } = jwt.verify(token, process.env.APP_SECRET);
 
