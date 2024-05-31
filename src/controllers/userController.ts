@@ -109,6 +109,7 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
                 lastname: user?.lastname,
                 password: user?.phone,
                 position: user?.position,
+                isAdmin: user?.isAdmin
             });
             try {
                 resUsers.push(newUser);
