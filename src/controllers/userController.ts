@@ -108,6 +108,7 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
                 firstname: user?.firstname,
                 lastname: user?.lastname,
                 password: user?.phone,
+                phone: user?.phone,
                 position: user?.position,
                 isAdmin: user?.isAdmin
             });
