@@ -59,7 +59,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         if (bcrypt.compareSync(req.body.password, user.password)) {
 
             const token = jwt.sign({ userId: user._id, isAdmin: user?.isAdmin }, process.env.APP_SECRET, {
-                expiresIn: '7d',
+                expiresIn: '30d',
             });
             const { _id, firstname, lastname, email, avatar, isAdmin } = user;
             

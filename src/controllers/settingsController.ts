@@ -1,8 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import _, { forEach, update } from 'lodash';
+import { NextFunction, Response } from 'express';
+import _ from 'lodash';
 import { User } from '../models/UserModel';
-import mongoose from 'mongoose';
-import { ErrorType } from '../middlewares/errorHandler';
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
