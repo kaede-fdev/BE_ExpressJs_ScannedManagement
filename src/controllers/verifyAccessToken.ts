@@ -17,7 +17,6 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
             });
         }
         const token = authorization.replace('Bearer ', '');
-        console.log(token);
 
         const { userId } = jwt.verify(token, process.env.APP_SECRET);
 

@@ -49,10 +49,10 @@ export const getAllUsers = async (req: any, res: Response, next: NextFunction) =
                 { nickname: searchRegex },
             ];
         }
-        
+
         // Fetch users with pagination and filtering
-        console.log(filter)
-        const users = await User.find(filter).sort({ isAdmin: -1 }).skip(skip).limit(limit);
+        // console.log(filter);
+        const users = await User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
 
         const totalUsers = await User.countDocuments(filter);
 
@@ -110,13 +110,16 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
                 password: user?.phone,
                 phone: user?.phone,
                 position: user?.position,
-                isAdmin: user?.isAdmin
+                isAdmin: user?.isAdmin,
             });
             try {
                 resUsers.push(newUser);
                 await newUser.save();
             } catch (error) {
-                next(error);
+                console.log(error)
+                const err: ErrorType = new Error('Something went wrong!');
+                err.status = 400;
+                next(error)
             }
         });
 
@@ -174,14 +177,14 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
             });
         }
 
-        if(req.params?.userId === userId) {
+        if (req.params?.userId === userId) {
             return res.status(400).json({
                 status: 'error',
                 message: 'You cant delete yourself',
             });
         }
 
-        const {userId: id} = req.params;
+        const { userId: id } = req.params;
 
         await User.findByIdAndDelete(id);
 
@@ -189,8 +192,11 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
             status: 'Success',
             message: 'Delete user successfully',
         });
-
     } catch (error) {
         return next(error);
     }
 };
+
+export const editUserSpecialUser = (req: Request, res: Response, next: NextFunction) => {
+
+}
