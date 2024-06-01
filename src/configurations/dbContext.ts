@@ -1,3 +1,5 @@
+import { seedAdminUser } from "./adminSeeding";
+
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
@@ -8,9 +10,9 @@ const connectDB = async () => {
             useNewUrlParser: true,
         });
         console.log('Database connect succesfully !');
+        await seedAdminUser();
     } catch (error) {
-        // console.log(error);
-
+        console.error('Database connection failed:', error);
         process.exit(1);
     }
 };
