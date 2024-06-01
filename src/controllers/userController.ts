@@ -116,10 +116,9 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
                 resUsers.push(newUser);
                 await newUser.save();
             } catch (error) {
-                console.log(error)
                 const err: ErrorType = new Error('Something went wrong!');
                 err.status = 400;
-                next(error)
+                next(error);
             }
         });
 
@@ -197,6 +196,47 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-export const editUserSpecialUser = (req: Request, res: Response, next: NextFunction) => {
+export const editUserSpecialUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
 
-}
+        const user = await User.findById(userId);
+
+        if (!user?.isAdmin) {
+            res.status(403).json({
+                status: 'error',
+                message: 'You are not allowed to access this field',
+            });
+        }
+
+        const { _id } = req.body;
+
+        const updateData = _.omit(req.body, ['_id', 'email']);
+
+        const dbResult = await User.findByIdAndUpdate(_id, updateData, {
+            new: true,
+            runValidator: true,
+        });
+
+        const response = _.omit(dbResult.toObject());
+
+        res.status(200).json({
+            status: 'Success',
+            message: 'Edit successfully',
+            data: response,
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
