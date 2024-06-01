@@ -3,7 +3,7 @@ import { Schema } from 'mongoose';
 
 const mongoose = require('mongoose');
 
-const scannedSchema = mongoose.Schema(
+const scannedCheckoutSchema = mongoose.Schema(
     {
         wholeText: {
             type: String,
@@ -46,4 +46,4 @@ const scannedSchema = mongoose.Schema(
 );
 
 
-export const Scanned = mongoose.model('Scanned', scannedSchema);
+export const ScannedCheckout = mongoose.model('ScannedCheckout', scannedCheckoutSchema);
