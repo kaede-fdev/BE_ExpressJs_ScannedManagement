@@ -34,7 +34,7 @@ export const getAllUsers = async (req: any, res: Response, next: NextFunction) =
         const limit = parseInt(req.query.limit as string) || 999;
         const skip = (page - 1) * limit;
 
-        let filter: any = { email: { $ne: "admin@gmail.com" } };
+        let filter: any = { email: { $ne: "admin" } };
 
         let search = req.query.search ? req.query.search.toString() : '';
         // Remove surrounding double quotes if they exist

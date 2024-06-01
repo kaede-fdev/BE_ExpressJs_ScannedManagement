@@ -2,9 +2,9 @@ import { User } from "../models/UserModel";
 
 export const seedAdminUser = async () => {
     try {
-        const adminEmail = 'admin@gmail.com'
+        const adminEmail = 'admin'
         const existedAdmin = await User.findOne({email: adminEmail});
-        
+
         if(!existedAdmin) {
             const admin = new User({
                 email : adminEmail,
