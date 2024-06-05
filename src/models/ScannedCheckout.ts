@@ -40,6 +40,14 @@ const scannedCheckoutSchema = mongoose.Schema(
         scannedBy: {
             type: Schema.Types.ObjectId,
             ref: "User"
+        },
+        banId: {
+            type: Schema.Types.ObjectId,
+            ref: "Ban"
+        },
+        managerId: {
+            type: Schema.Types.ObjectId,
+            ref: "Manager"
         }
     },
     { timestamps: true },

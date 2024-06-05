@@ -13,6 +13,8 @@ const authRoute = require('./src/routes/authRoute');
 const userRoute = require('./src/routes/userRoute');
 const settingsRoute = require('./src/routes/settingsRoute');
 const scannedRoute = require('./src/routes/scannedRoute');
+const banRoute = require('./src/routes/banRoute');
+const banManagerRoute = require('./src/routes/banManagerRoute');
 
 const app = express();
 const server = require("http").Server(app);
@@ -28,6 +30,8 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/settings', settingsRoute);
 app.use('/api/v1/scan', scannedRoute);
+app.use('/api/v1/ban', banRoute);
+app.use('/api/v1/manager', banManagerRoute)
 
 app.all('*', (req, res, next) => {
     const err: ErrorType = new Error('Unhandled Route');

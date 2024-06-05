@@ -130,8 +130,6 @@ export const saveScanForCheckout = async (req: Request, res: Response, next: Nex
             createdAt: { $gte: tenMinutesAgo, $lte: now },
         });
 
-        console.log(foundExisted);
-
         if (foundExisted?.wholeText === data) {
             res.status(200).json({
                 status: 'Founed',
@@ -188,6 +186,8 @@ export const getAllScannedData = async (req: Request, res: Response, next: NextF
                 path: 'scannedBy',
                 select: '_id email firstname lastname avatar position',
             })
+            .populate('banId')
+            .populate('managerId')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
@@ -241,6 +241,8 @@ export const getAllScannedDataForCheckout = async (req: Request, res: Response, 
             path: 'scannedBy',
             select: '_id email firstname lastname avatar position',
         })
+        .populate('banId')
+        .populate('managerId')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -292,7 +294,53 @@ export const deleteScannedDataById = async (req: Request, res: Response, next: N
 
         try {
             const res = await ScannedCheckin.findByIdAndDelete(scannedId);
-            console.log(res);
+        } catch (error) {
+            return res.status(400).json({
+                status: 'Error',
+                message: 'Something went wrong when try to delete scanned',
+            });
+        }
+
+        res.status(200).json({
+            status: 'Success',
+            message: 'Delete scanned successfully',
+        });
+    } catch (error) {
+        const err: ErrorType = new Error('Something went wrong');
+        err.status = 400;
+        return next(error);
+    }
+};
+
+export const deleteScannedDataByIdForCheckout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
+
+        const user = await User.findById({ _id: userId });
+
+        if (!user) {
+            res.status(401).json({
+                status: 'error',
+                message: 'You are not allow to access this endpoint',
+            });
+        }
+
+        const { scannedId } = req?.params;
+
+        try {
+            const res = await ScannedCheckout.findByIdAndDelete(scannedId);
         } catch (error) {
             return res.status(400).json({
                 status: 'Error',
@@ -354,6 +402,8 @@ export const getAllScannedDataByDate = async (req: Request, res: Response, next:
                 path: 'scannedBy',
                 select: '_id email firstname lastname avatar position',
             })
+            .populate('banId')
+            .populate('managerId')
             .sort({ createdAt: -1 })
             .exec();
 
@@ -377,8 +427,7 @@ export const getAllScannedDataByDate = async (req: Request, res: Response, next:
     }
 };
 
-
-export const getAllScannedDataByDateForCheckoutData= async (req: Request, res: Response, next: NextFunction) => {
+export const getAllScannedDataByDateForCheckoutData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let filter: any = {};
 
@@ -394,6 +443,8 @@ export const getAllScannedDataByDateForCheckoutData= async (req: Request, res: R
                 path: 'scannedBy',
                 select: '_id email firstname lastname avatar position',
             })
+            .populate('banId')
+            .populate('managerId')
             .sort({ createdAt: -1 })
             .exec();
 
@@ -401,7 +452,7 @@ export const getAllScannedDataByDateForCheckoutData= async (req: Request, res: R
 
         res.status(200).json({
             status: 'Success',
-            message: 'Checkin data',
+            message: 'Checkout data',
             results: scanneds.length,
             total: totalScanned,
             data: {
@@ -416,3 +467,133 @@ export const getAllScannedDataByDateForCheckoutData= async (req: Request, res: R
         return next(error);
     }
 };
+
+export const saveScanFromHandInput = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
+
+        const user = await User.findById({ _id: userId });
+
+        if (!user) {
+            res.status(401).json({
+                status: 'error',
+                message: 'You are not allow to access this endpoint',
+            });
+        }
+
+        const saveData = req.body;
+
+        const response = await ScannedCheckin.create({
+            ...saveData,
+            scannedBy: user._id,
+        });
+
+        res.status(200).json({
+            status: 'Success',
+            data: response,
+        });
+    } catch (error) {
+        const err: ErrorType = new Error('Something went wrong');
+        err.status = 400;
+        return next(error);
+    }
+};
+
+export const saveScanFromHandInputForCheckout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
+
+        const user = await User.findById({ _id: userId });
+
+        if (!user) {
+            res.status(401).json({
+                status: 'error',
+                message: 'You are not allow to access this endpoint',
+            });
+        }
+
+        const saveData = req.body;
+
+        const response = await ScannedCheckout.create({
+            ...saveData,
+            scannedBy: user._id,
+        });
+
+        res.status(200).json({
+            status: 'Success',
+            data: response,
+        });
+    } catch (error) {
+        const err: ErrorType = new Error('Something went wrong');
+        err.status = 400;
+        return next(error);
+    }
+};
+
+export const editScanCheckin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.body;
+        const updateData = _.omit(req.body, ['_id']);
+        const dbResult = await ScannedCheckin.findByIdAndUpdate(_id, updateData, {
+            new: true,
+            runValidator: true,
+        });
+        const response = _.omit(dbResult.toObject());
+
+        res.status(200).json({
+            status: 'Success',
+            message: 'Edit successfully',
+            data: response,
+        });
+    } catch (error) {
+        const err: ErrorType = new Error('Something went wrong');
+        err.status = 400;
+        return next(error);
+    }
+}
+
+export const editScanCheckout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = req.body;
+        const updateData = _.omit(req.body, ['_id']);
+        const dbResult = await ScannedCheckout.findByIdAndUpdate(_id, updateData, {
+            new: true,
+            runValidator: true,
+        });
+        const response = _.omit(dbResult.toObject());
+
+        res.status(200).json({
+            status: 'Success',
+            message: 'Edit successfully',
+            data: response,
+        });
+    } catch (error) {
+        const err: ErrorType = new Error('Something went wrong');
+        err.status = 400;
+        return next(error);
+    }
+}
