@@ -80,8 +80,6 @@ export const deleteBanById = async (req: Request, res: Response, next: NextFunct
         }
         const {banId :id} = req.params;
 
-        console.log(id);
-
         await Ban.findByIdAndDelete(id);
         res.status(200).json({
             status: "Success",

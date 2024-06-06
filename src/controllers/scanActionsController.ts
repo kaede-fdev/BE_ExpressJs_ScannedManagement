@@ -39,6 +39,7 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
         const tenMinutesAgo = subMinutes(now, 10);
 
         const { data } = req?.body;
+        const {banId, managerId} = req?.body;
 
         const foundExisted = await ScannedCheckin.findOne({
             wholeText: data,
@@ -63,6 +64,8 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
             const scannedDataForCheckout = new ScannedCheckout({
                 ...parseDataForCheckout,
                 scannedBy: user._id,
+                banId: foundExisted?.banId,
+                managerId: foundExisted?.managerId
             });
 
             await ScannedCheckout.create(scannedDataForCheckout);
@@ -79,6 +82,8 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
         const scannedData = new ScannedCheckin({
             ...parsedData,
             scannedBy: user._id,
+            banId: banId,
+            managerId: managerId
         });
 
         await ScannedCheckin.create(scannedData);

@@ -179,7 +179,6 @@ export const getAllBanManager = async (req: Request, res: Response, next: NextFu
 
 export const findBanManagerByBanId = async (req: Request, res: Response, next: NextFunction) => {
     const {banId: id} = req.params;
-    console.log(id);
     try {
         const managers = await BanManager.find({
             banId: id

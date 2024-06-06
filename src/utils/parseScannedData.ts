@@ -10,7 +10,7 @@ interface IScanned {
 }
 
 const parseDateString = (dateString: string): Date => {
-    if (dateString.length !== 8) {
+    if (dateString.length < 8) {
         throw new Error("Invalid date format. Expected 'ddMMyyyy'.");
     }
 
