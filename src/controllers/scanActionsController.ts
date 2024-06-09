@@ -12,6 +12,7 @@ const { extractScannedData } = require('../utils/parseScannedData');
 
 //Sorry 'cause this src so trash =((
 //Please read some cmt to ensure understand the change in function =(
+//Hope good
 
 export const saveScan = async (req: Request, res: Response, next: NextFunction) => {
     try {
