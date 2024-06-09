@@ -511,7 +511,7 @@ export const saveScanFromHandInput = async (req: Request, res: Response, next: N
         }
 
         const saveData = req.body;
-        console.log(saveData);
+
 
         const response = await ScannedCheckin.create({
             ...saveData,
@@ -576,7 +576,6 @@ export const editScanCheckin = async (req: Request, res: Response, next: NextFun
     try {
         const { _id } = req.body;
         const updateData = _.omit(req.body, ['_id']);
-        console.log(updateData);
         const dbResult = await ScannedCheckin.findByIdAndUpdate(_id, updateData, {
             new: true,
             runValidator: true,
