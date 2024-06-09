@@ -10,6 +10,9 @@ const bcrypt = require('bcryptjs');
 
 const { extractScannedData } = require('../utils/parseScannedData');
 
+//Sorry 'cause this src so trash =((
+//Please read some cmt to ensure understand the change in function =(
+
 export const saveScan = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authorization = req.header('authorization');
@@ -36,10 +39,10 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
         }
 
         const now = new Date();
-        const tenMinutesAgo = subMinutes(now, 10);
+        const tenMinutesAgo = subMinutes(now, 5);
 
         const { data } = req?.body;
-        const {banId, managerId} = req?.body;
+        const {banId, managerName} = req?.body;
 
         const foundExisted = await ScannedCheckin.findOne({
             wholeText: data,
@@ -65,15 +68,16 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
                 ...parseDataForCheckout,
                 scannedBy: user._id,
                 banId: foundExisted?.banId,
-                managerId: foundExisted?.managerId
+                // managerId: foundExisted?.managerId
+                managerName: foundExisted?.managerName
             });
-
-            await ScannedCheckout.create(scannedDataForCheckout);
-            res.status(200).json({
-                status: 'Success',
-                message: 'Checkout saved',
-                data: parseDataForCheckout,
-            });
+            
+            // await ScannedCheckout.create(scannedDataForCheckout);
+            // res.status(200).json({
+            //     status: 'Success',
+            //     message: 'Checkout saved',
+            //     data: parseDataForCheckout,
+            // });
             return;
         }
 
@@ -83,7 +87,7 @@ export const saveScan = async (req: Request, res: Response, next: NextFunction) 
             ...parsedData,
             scannedBy: user._id,
             banId: banId,
-            managerId: managerId
+            managerName: managerName
         });
 
         await ScannedCheckin.create(scannedData);
@@ -184,6 +188,10 @@ export const getAllScannedData = async (req: Request, res: Response, next: NextF
                 { fullAddress: searchRegex },
                 { gender: searchRegex },
             ];
+        }
+
+        if (req.query.isCheckout) {
+            filter.isCheckout = req.query.isCheckout === 'true';
         }
 
         const scanneds = await ScannedCheckin.find(filter)
@@ -402,6 +410,8 @@ export const getAllScannedDataByDate = async (req: Request, res: Response, next:
             filter.createdAt = { $gte: fromDate, $lte: toDate };
         }
 
+        filter.isCheckout = false;
+
         const scanneds = await ScannedCheckin.find(filter)
             .populate({
                 path: 'scannedBy',
@@ -442,8 +452,9 @@ export const getAllScannedDataByDateForCheckoutData = async (req: Request, res: 
         if (fromDate && toDate) {
             filter.createdAt = { $gte: fromDate, $lte: toDate };
         }
+        filter.isCheckout = true;
 
-        const scanneds = await ScannedCheckout.find(filter)
+        const scanneds = await ScannedCheckin.find(filter)
             .populate({
                 path: 'scannedBy',
                 select: '_id email firstname lastname avatar position',
@@ -499,6 +510,7 @@ export const saveScanFromHandInput = async (req: Request, res: Response, next: N
         }
 
         const saveData = req.body;
+        console.log(saveData);
 
         const response = await ScannedCheckin.create({
             ...saveData,
@@ -563,6 +575,7 @@ export const editScanCheckin = async (req: Request, res: Response, next: NextFun
     try {
         const { _id } = req.body;
         const updateData = _.omit(req.body, ['_id']);
+        console.log(updateData);
         const dbResult = await ScannedCheckin.findByIdAndUpdate(_id, updateData, {
             new: true,
             runValidator: true,

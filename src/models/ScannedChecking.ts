@@ -48,6 +48,18 @@ const scannedCheckinSchema = mongoose.Schema(
         managerId: {
             type: Schema.Types.ObjectId,
             ref: "Manager"
+        },
+        managerName: {
+            type: String,
+            default: null,
+        },
+        isCheckout: {
+            type: Boolean,
+            default: false
+        },
+        checkoutAt: {
+            type: Date,
+            default: null,
         }
     },
     { timestamps: true },

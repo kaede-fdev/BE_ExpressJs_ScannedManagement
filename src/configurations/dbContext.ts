@@ -1,4 +1,5 @@
 import { seedAdminUser } from "./adminSeeding";
+import { seedBanData } from "./banSeeding";
 
 const mongoose = require('mongoose');
 
@@ -11,6 +12,7 @@ const connectDB = async () => {
         });
         console.log('Database connect succesfully !');
         await seedAdminUser();
+        await seedBanData();
     } catch (error) {
         console.error('Database connection failed:', error);
         process.exit(1);
