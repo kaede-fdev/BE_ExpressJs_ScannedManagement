@@ -60,6 +60,10 @@ const scannedCheckinSchema = mongoose.Schema(
         checkoutAt: {
             type: Date,
             default: null,
+        },
+        purpose: {
+            type: String,
+            default: null,
         }
     },
     { timestamps: true },
