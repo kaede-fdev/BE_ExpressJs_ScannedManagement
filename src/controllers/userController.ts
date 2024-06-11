@@ -107,7 +107,7 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
                 email: user?.email,
                 firstname: user?.firstname,
                 lastname: user?.lastname,
-                password: user?.phone,
+                password: user?.password,
                 phone: user?.phone,
                 position: user?.position,
                 isAdmin: user?.isAdmin,
@@ -124,7 +124,7 @@ export const createUser = async (req: any, res: Response, next: NextFunction) =>
 
         res.status(200).json({
             status: 'success',
-            data: resUsers,
+            data: _.omit(resUsers, ['password']),
         });
     } catch (error) {
         const err: ErrorType = new Error('Something went wrong!');
@@ -222,7 +222,7 @@ export const editUserSpecialUser = async (req: Request, res: Response, next: Nex
 
         const { _id } = req.body;
 
-        const updateData = _.omit(req.body, ['_id', 'email']);
+        const updateData = _.omit(req.body, ['_id']);
 
         const dbResult = await User.findByIdAndUpdate(_id, updateData, {
             new: true,
@@ -240,3 +240,52 @@ export const editUserSpecialUser = async (req: Request, res: Response, next: Nex
         return next(error);
     }
 };
+
+export const changeUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authorization = req.header('authorization');
+        if (!authorization) {
+            return res.status(401).json({
+                error: {
+                    statusCode: 400,
+                    status: 'error',
+                    message: 'Token is invalid',
+                },
+            });
+        }
+        const token = authorization.replace('Bearer ', '');
+        const { userId } = jwt.verify(token, process.env.APP_SECRET);
+
+        const user = await User.findById(userId);
+
+        const {newPassword, forUserId} = req.body;
+
+        let passwordHashed = await bcrypt.hashSync(newPassword, 10, function (err: Error, hash: string) {
+            if (err) {
+                return next(err);
+            } else {
+                passwordHashed = hash;
+                // next();
+            }
+        });
+        const response = await User.findByIdAndUpdate(
+            forUserId,
+            { password: passwordHashed },
+            { new: true, runValidator: true },
+        );
+        res.status(200).json({
+            status: 'success',
+            message: 'Change password successfully',
+            data: response,
+        });
+
+        if (!user?.isAdmin) {
+            res.status(403).json({
+                status: 'error',
+                message: 'You are not allowed to access this field',
+            });
+        }
+    } catch (error) {
+        return next(error);
+    }
+}

@@ -411,9 +411,7 @@ export const getAllScannedDataByDate = async (req: Request, res: Response, next:
         if (fromDate && toDate) {
             filter.createdAt = { $gte: fromDate, $lte: toDate };
         }
-
-        filter.isCheckout = false;
-
+        
         const scanneds = await ScannedCheckin.find(filter)
             .populate({
                 path: 'scannedBy',
